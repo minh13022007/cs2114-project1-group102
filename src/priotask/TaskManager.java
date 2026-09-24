@@ -56,4 +56,28 @@ public class TaskManager {
         return pastTasks;
     }
     
+    private List<SchoolEvent> events;
+
+    public void addEvent(String eventName, LocalDate eventDate, String eventType) {
+        if (eventName == null || eventDate == null || eventType == null) {
+            throw new IllegalArgumentException("Event details cannot be null");
+        }
+        events.add(new SchoolEvent(eventName, eventDate, eventType));
+    }
+
+    public List<SchoolEvent> getSortedEvents() {
+        if (events.isEmpty()) return new ArrayList<>();
+        return events.stream()
+                .sorted(Comparator.comparing(SchoolEvent::getEventDate))
+                .collect(Collectors.toList());
+    }
+
+    public boolean removeEvent(int displayIndex) {
+        List<SchoolEvent> sorted = getSortedEvents();
+        if (displayIndex < 1 || displayIndex > sorted.size()) return false;
+        return events.remove(sorted.get(displayIndex - 1));
+    }
+
+    public List<SchoolEvent> getEvents() { return events; }
+    public void setEvents(List<SchoolEvent> events) { if (events != null) this.events = events; }
 }
