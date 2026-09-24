@@ -16,6 +16,7 @@ public class PriotaskApp {
         
         // Phased JSON Rollout: Load on startup
         manager.setActiveTasks(storageManager.loadTasks());
+        manager.setEvents(storageManager.loadEvents());
     }
 
     public static void main(String[] args) {
@@ -30,11 +31,12 @@ public class PriotaskApp {
 
         while (running) {
             System.out.println("\n--- Main Menu ---");
-            System.out.println("1. View Tasks");
+            System.out.println("1. View Calendar (Tasks & Events)");
             System.out.println("2. Add Task");
             System.out.println("3. Complete Task");
             System.out.println("4. View Completed Tasks");
-            System.out.println("5. Exit");
+            System.out.println("5. Add School Event");
+            System.out.println("6. Exit");
             System.out.print("> ");
             
             String choice = scanner.nextLine().trim();
@@ -48,6 +50,7 @@ public class PriotaskApp {
                         System.out.println("\n--- Active Tasks ---");
                         displayTasks(tasksToView);
                     }
+                    displayEvents(manager.getSortedEvents());
                     break;
                 case "2":
                     String title = promptForTitle();
@@ -85,13 +88,21 @@ public class PriotaskApp {
                     }
                     break;
                 case "5":
-                    System.out.println("Saving tasks...");
+                    String eventName = promptForEventName();
+                    LocalDate eventDate = promptForDate();
+                    String eventType = promptForEventType();
+                    manager.addEvent(eventName, eventDate, eventType);
+                    System.out.println("School event successfully added!");
+                    break;
+                case "6":
+                    System.out.println("Saving tasks and events...");
                     storageManager.saveTasks(manager.getActiveTasks());
+                    storageManager.saveEvents(manager.getEvents());
                     System.out.println("Goodbye!");
                     running = false;
                     break;
                 default:
-                    System.out.println("Invalid choice. Please select 1-5.");
+                    System.out.println("Invalid choice. Please select 1-6.");
             }
         }
         scanner.close();
@@ -138,6 +149,58 @@ public class PriotaskApp {
         }
     }
 
+    // --- School Events (clubs, social events, etc.) ---
+ 
+    private String promptForEventName() {
+        while (true) {
+            System.out.print("Enter event name: ");
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty() || input.length() > 60) {
+                System.out.println("Event names must be between 1 and 60 characters.");
+            } else {
+                return input;
+            }
+        }
+    }
+ 
+    private String promptForEventType() {
+        while (true) {
+            System.out.print("Enter event type (Club, Social, Other): ");
+            String input = scanner.nextLine().trim();
+            switch (input.toLowerCase()) {
+                case "club":
+                    return "Club";
+                case "social":
+                    return "Social";
+                case "other":
+                    return "Other";
+                default:
+                    System.out.println("Invalid choice. Please enter Club, Social, or Other.");
+            }
+        }
+    }
+ 
+    private void displayEvents(List<SchoolEvent> events) {
+        System.out.println("\n--- Upcoming School Events ---");
+        if (events.isEmpty()) {
+            System.out.println("No upcoming school events.");
+            return;
+        }
+        System.out.println("--------------------------------------------------------------------------------");
+        System.out.printf("%-5s | %-40s | %-12s | %-15s%n", "ID", "Event Name", "Date", "Type");
+        System.out.println("--------------------------------------------------------------------------------");
+ 
+        for (int i = 0; i < events.size(); i++) {
+            SchoolEvent event = events.get(i);
+            System.out.printf("%-5d | %-40s | %-12s | %-15s%n",
+                    (i + 1),
+                    event.getEventName(),
+                    event.getEventDate().toString(),
+                    event.getEventType());
+        }
+        System.out.println("--------------------------------------------------------------------------------");
+    }
+ 
     private void displayTasks(List<Assignment> tasks) {
         System.out.println("\n--------------------------------------------------------------------------------");
         System.out.printf("%-5s | %-40s | %-12s | %-10s%n", "ID", "Title", "Due Date", "Priority");

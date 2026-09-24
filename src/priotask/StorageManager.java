@@ -12,6 +12,7 @@ import java.util.List;
 
 public class StorageManager {
     private final String filePath = "assignments.json";
+    private final String eventsFilePath = "events.json";
     private final Gson gson;
 
     public StorageManager() {
@@ -54,6 +55,30 @@ public class StorageManager {
             return tasks != null ? tasks : new ArrayList<>();
         } catch (IOException e) {
             System.out.println("Error loading tasks from disk: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public void saveEvents(List<SchoolEvent> events) {
+        try (Writer writer = new FileWriter(eventsFilePath)) {
+            gson.toJson(events, writer);
+        } catch (IOException e) {
+            System.out.println("Error saving events to disk: " + e.getMessage());
+        }
+    }
+
+    public List<SchoolEvent> loadEvents() {
+        File file = new File(eventsFilePath);
+        if (!file.exists()) {
+            return new ArrayList<>();
+        }
+
+        try (Reader reader = new FileReader(eventsFilePath)) {
+            Type listType = new TypeToken<ArrayList<SchoolEvent>>(){}.getType();
+            List<SchoolEvent> events = gson.fromJson(reader, listType);
+            return events != null ? events : new ArrayList<>();
+        } catch (IOException e) {
+            System.out.println("Error loading events from disk: " + e.getMessage());
             return new ArrayList<>();
         }
     }

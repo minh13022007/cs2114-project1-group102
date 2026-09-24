@@ -14,11 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/priotask/SchoolEvent.java</name>
-			<type>1</type>
-			<location>C:/Users/kavin/Downloads/SchoolEvent.java</location>
-		</link>
-	</linkedResources>
 </projectDescription>
