@@ -14,7 +14,7 @@ public class PriotaskApp {
         this.manager = new TaskManager();
         this.storageManager = new StorageManager();
         
-        // Phased JSON Rollout: Load on startup
+       
         manager.setActiveTasks(storageManager.loadTasks());
         manager.setEvents(storageManager.loadEvents());
     }
