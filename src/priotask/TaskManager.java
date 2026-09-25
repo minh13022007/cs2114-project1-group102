@@ -35,12 +35,12 @@ public class TaskManager {
     }
  
     public boolean completeTask(int displayIndex) {
-        if (displayIndex < 1 || displayIndex > activeTasks.size()) {
+        List<Assignment> sorted = getSortedTasks();
+        if (displayIndex < 1 || displayIndex > sorted.size()) {
             return false;
         }
-        
-        // Convert 1-based display index to 0-based array index
-        Assignment completed = activeTasks.remove(displayIndex - 1);
+        Assignment completed = sorted.get(displayIndex - 1);
+        activeTasks.remove(completed);
         pastTasks.add(completed);
         return true;
     }
